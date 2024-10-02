@@ -17,16 +17,19 @@ class PlumBookPage extends StatelessWidget {
             textStyle: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
         ),
-        backgroundColor: const Color(0xFF6A0572),
+        backgroundColor: const Color.fromARGB(255, 211, 211, 211),
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF6A0572), Color(0xFF4A1380)],
+            colors: [
+              Color.fromARGB(255, 211, 211, 211),
+              Color.fromARGB(255, 255, 255, 255)
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -42,7 +45,7 @@ class PlumBookPage extends StatelessWidget {
                   textStyle: const TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -57,7 +60,7 @@ class PlumBookPage extends StatelessWidget {
                       child: ScaleTransition(
                         scale: const AlwaysStoppedAnimation(1.1),
                         child: Card(
-                          color: Colors.white12,
+                          color: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -68,7 +71,7 @@ class PlumBookPage extends StatelessWidget {
                                 textStyle: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
@@ -77,7 +80,7 @@ class PlumBookPage extends StatelessWidget {
                               style: GoogleFonts.comfortaa(
                                 textStyle: const TextStyle(
                                   fontSize: 18,
-                                  color: Colors.white70,
+                                  color: Colors.black,
                                 ),
                               ),
                             ),

@@ -85,7 +85,10 @@ class _GreetingsPageState extends State<GreetingsPage>
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF6A0572), Color(0xFF4A1380)],
+                colors: [
+                  Color.fromARGB(255, 211, 211, 211),
+                  Color.fromARGB(255, 255, 255, 255)
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -104,7 +107,7 @@ class _GreetingsPageState extends State<GreetingsPage>
                     style: GoogleFonts.comfortaa(
                       textStyle: const TextStyle(
                         fontSize: 32,
-                        color: Colors.white,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -116,7 +119,7 @@ class _GreetingsPageState extends State<GreetingsPage>
                     style: GoogleFonts.comfortaa(
                       textStyle: const TextStyle(
                         fontSize: 22,
-                        color: Colors.white70,
+                        color: Colors.black,
                       ),
                     ),
                     textAlign: TextAlign.center,
@@ -131,7 +134,7 @@ class _GreetingsPageState extends State<GreetingsPage>
                     style: GoogleFonts.comfortaa(
                       textStyle: const TextStyle(
                         fontSize: 22,
-                        color: Colors.white70,
+                        color: Colors.black,
                       ),
                     ),
                     textAlign: TextAlign.center,
@@ -162,12 +165,12 @@ class _GreetingsPageState extends State<GreetingsPage>
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withOpacity(0.1),
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.black.withOpacity(0.1),
+          foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          side: BorderSide(color: Colors.white.withOpacity(0.6)),
+          side: BorderSide(color: Colors.black.withOpacity(0.6)),
         ),
         child: Text(
           text,
@@ -175,7 +178,7 @@ class _GreetingsPageState extends State<GreetingsPage>
             textStyle: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
         ),

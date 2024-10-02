@@ -12,11 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'The Magic Plum Tree',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
         textTheme: GoogleFonts.comfortaaTextTheme(
-          Theme.of(context).textTheme.apply(bodyColor: Colors.white),
+          Theme.of(context).textTheme.apply(bodyColor: Colors.black),
         ),
       ),
       home: GreetingsPage(),
