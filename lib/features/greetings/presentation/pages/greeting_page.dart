@@ -1,28 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:plum_app/features/plums/presentation/plumb_book_page.dart';
 import '../../data/greeting_data_source.dart';
 import '../../domain/greeting.dart';
 import '../../../plums/domain/plum.dart';
 
 class GreetingsPage extends StatefulWidget {
-  const GreetingsPage({super.key});
-
   @override
   _GreetingsPageState createState() => _GreetingsPageState();
 }
 
-class _GreetingsPageState extends State<GreetingsPage> {
+class _GreetingsPageState extends State<GreetingsPage>
+    with SingleTickerProviderStateMixin {
   final GreetingDataSource _greetingDataSource = GreetingDataSource();
   List<Greeting> greetings = [];
   List<Plum> plums = [];
   int currentIndex = 0;
   List<Plum> unlockedPlums = [];
 
+  late AnimationController _controller;
+  late Animation<double> _fadeInAnimation;
+
   @override
   void initState() {
     super.initState();
     greetings = _greetingDataSource.getGreetings();
     plums = _greetingDataSource.getPlums();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    _fadeInAnimation =
+        CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void _onCorrectGreeting() {
@@ -30,12 +47,29 @@ class _GreetingsPageState extends State<GreetingsPage> {
       unlockedPlums.add(plums[currentIndex]);
       if (currentIndex < greetings.length - 1) {
         currentIndex++;
+        _controller.reset();
+        _controller.forward();
       } else {
-        // Navigate to the PlumBookPage when all plums are unlocked
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => PlumBookPage(unlockedPlums: unlockedPlums)),
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                PlumBookPage(unlockedPlums: unlockedPlums),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              var begin = const Offset(0.0, 1.0);
+              var end = Offset.zero;
+              var curve = Curves.easeInOut;
+
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: FadeTransition(opacity: animation, child: child),
+              );
+            },
+          ),
         );
       }
     });
@@ -44,59 +78,108 @@ class _GreetingsPageState extends State<GreetingsPage> {
   @override
   Widget build(BuildContext context) {
     Greeting currentGreeting = greetings[currentIndex];
-    Plum currentPlum = plums[currentIndex];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('The Magic Plum Tree Awakes')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Meet someone from ${currentGreeting.language}!',
-              style: const TextStyle(fontSize: 24),
-              textAlign: TextAlign.center,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF6A0572), Color(0xFF4A1380)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
             ),
-            const SizedBox(height: 20),
-            Image.asset(
-                'assets/images/${currentPlum.culturalItem.toLowerCase().replaceAll(" ", "-")}.png',
-                height: 100),
-            const SizedBox(height: 20),
-            _buildOptions(currentGreeting),
-          ],
-        ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+            child: FadeTransition(
+              opacity: _fadeInAnimation,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Learn to greet in ${currentGreeting.language}',
+                    style: GoogleFonts.comfortaa(
+                      textStyle: const TextStyle(
+                        fontSize: 32,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 40),
+                  Text(
+                    'How do you say "Hello"?',
+                    style: GoogleFonts.comfortaa(
+                      textStyle: const TextStyle(
+                        fontSize: 22,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildOptionButton('你好 (nǐ hǎo)', currentGreeting.hello),
+                  _buildOptionButton('Hola', currentGreeting.hello),
+                  _buildOptionButton('Bonjour', currentGreeting.hello),
+                  const SizedBox(height: 40),
+                  Text(
+                    'How do you say "Thank You"?',
+                    style: GoogleFonts.comfortaa(
+                      textStyle: const TextStyle(
+                        fontSize: 22,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildOptionButton('谢谢 (xièxiè)', currentGreeting.thankYou),
+                  _buildOptionButton('Gracias', currentGreeting.thankYou),
+                  _buildOptionButton('Merci', currentGreeting.thankYou),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildOptions(Greeting greeting) {
-    return Column(
-      children: [
-        Text('Which one is "${greeting.hello}"?'),
-        _buildGreetingButton('你好 (nǐ hǎo)', greeting.hello),
-        _buildGreetingButton('Hola', greeting.hello),
-        _buildGreetingButton('Bonjour', greeting.hello),
-        const SizedBox(height: 20),
-        Text('Which one is "${greeting.thankYou}"?'),
-        _buildGreetingButton('谢谢 (xièxiè)', greeting.thankYou),
-        _buildGreetingButton('Gracias', greeting.thankYou),
-        _buildGreetingButton('Merci', greeting.thankYou),
-      ],
-    );
-  }
-
-  Widget _buildGreetingButton(String text, String correctAnswer) {
-    return ElevatedButton(
-      onPressed: () {
-        if (text == correctAnswer) {
-          _onCorrectGreeting();
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Try again!')));
-        }
-      },
-      child: Text(text),
+  Widget _buildOptionButton(String text, String correctAnswer) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: ElevatedButton(
+        onPressed: () {
+          if (text == correctAnswer) {
+            _onCorrectGreeting();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Oops, try again!')));
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white.withOpacity(0.1),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          side: BorderSide(color: Colors.white.withOpacity(0.6)),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.comfortaa(
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
